@@ -43,7 +43,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
     QFile* file;
-    bool isTextChanged;
+    bool isTextChanged = false;
     QPrinter * printer;
 
 };

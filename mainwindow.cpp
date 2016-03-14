@@ -6,13 +6,9 @@
 #include <QTextStream>
 #include <QPrinterInfo>
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
+MainWindow::MainWindow(QWidget *parent):QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    ui->menuBar->setNativeMenuBar(false);
-    this->isTextChanged = false;
 }
 
 MainWindow::~MainWindow()
@@ -22,6 +18,13 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_actionNew_triggered()
 {
+    if(!this->isTextChanged){
+        if(this->file){
+            this->file->flush();
+            this->file->close();
+        }
+        this->file = new QFile("file.txt");
+    }
     QMessageBox msgBox;
     msgBox.setText("The document has been modified.");
     msgBox.setInformativeText("Do you want to save your changes?");
