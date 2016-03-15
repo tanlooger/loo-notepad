@@ -8,7 +8,8 @@
 #include <QPrinter>
 #include <QSettings>
 #include <QLabel>
-
+#include <QClipboard>
+#include <QMouseEvent>
 
 namespace Ui {
 class MainWindow;
@@ -43,7 +44,7 @@ private slots:
 
     void on_actionPrint_triggered();
 
-    void text_changed_msgbox();
+    int text_changed_msgbox();
 
 
     void on_actionUndo_triggered();

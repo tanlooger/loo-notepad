@@ -6,6 +6,7 @@
 #include <QRegExp>
 #include <QFontDialog>
 #include <QTextCursor>
+#include <QTableWidgetSelectionRange>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
@@ -25,13 +26,19 @@ MainWindow::MainWindow(QWidget *parent):
     this->stat = new QLabel(this);
     stat->setAlignment(Qt::AlignRight);
     ui->statusBar->addPermanentWidget(stat);
+    this->setMouseTracking(true);
+
+    connect(ui->textEdit, SIGNAL(copyAvailable(bool)), ui->actionCopy, SLOT(setEnabled(bool)));
+    connect(ui->textEdit, SIGNAL(copyAvailable(bool)), ui->actionCut, SLOT(setEnabled(bool)));
+    connect(ui->textEdit, SIGNAL(copyAvailable(bool)), ui->actionDelete, SLOT(setEnabled(bool)));
 }
 
 MainWindow::~MainWindow()
 {
-    if(this->file && this->file->isOpen())this->file->close();
     delete ui;
 }
+
+
 
 /*********MENU FILE ACTIONS BEGIN**********************/
 void MainWindow::on_actionNew_triggered()
@@ -86,21 +93,13 @@ void MainWindow::on_actionSave_triggered()
     this->isTextChanged = false;
 }
 
-void MainWindow::on_textEdit_textChanged()
-{
-    this->isTextChanged = true;
-}
 
 void MainWindow::closeEvent (QCloseEvent *event)
 {
-    if(this->isTextChanged){
-        event->ignore();
-        this->text_changed_msgbox();
-        event->accept();
-    }else{
-        event->accept();
-    }
-
+    if(!this->isTextChanged)event->accept();
+    event->ignore();
+    int ret = this->text_changed_msgbox();
+    if(ret==QMessageBox::Save || ret==QMessageBox::Discard)event->accept();
 }
 
 void MainWindow::on_actionSave_As_triggered()
@@ -110,6 +109,7 @@ void MainWindow::on_actionSave_As_triggered()
     dialog.setDirectory(QDir::homePath());
     dialog.setOption(QFileDialog::DontUseNativeDialog, true);
     QString filename = dialog.getSaveFileName(this).trimmed();
+    if(this->file && this->file->isOpen())this->file->close();
     this->file = new QFile(filename, this);
     if (!this->file->open(QIODevice::ReadWrite | QIODevice::Text))return;
     this->setWindowTitle(filename);
@@ -136,13 +136,21 @@ void MainWindow::on_actionPrint_triggered()
 
 void MainWindow::on_actionExit_triggered()
 {
-    if(this->isTextChanged)
-        this->text_changed_msgbox();
-    qApp->quit();
+    if(!this->isTextChanged)qApp->quit();
+    int ret = this->text_changed_msgbox();
+    if(ret==QMessageBox::Save || ret==QMessageBox::Discard)qApp->quit();
+}
+
+void MainWindow::on_textEdit_textChanged()
+{
+    this->isTextChanged = true;
+    ui->actionUndo->setEnabled(ui->textEdit->isUndoRedoEnabled());
+    ui->actionPaste->setEnabled(ui->textEdit->canPaste());
 }
 
 
-void MainWindow::text_changed_msgbox()
+
+int MainWindow::text_changed_msgbox()
 {
     QMessageBox msgBox;
     msgBox.setText("The document has been modified.");
@@ -153,45 +161,44 @@ void MainWindow::text_changed_msgbox()
       case QMessageBox::Save:
           this->on_actionSave_triggered();
           break;
-      case QMessageBox::Discard:
-          // Don't Save was clicked
-          break;
-      case QMessageBox::Cancel:
-          // Cancel was clicked
-          break;
-      default:
-          // should never be reached
-          break;
+//      case QMessageBox::Discard:
+//          // Don't Save was clicked
+//          break;
+//      case QMessageBox::Cancel:
+//          // Cancel was clicked
+//          break;
+//      default:
+//          break;
     }
+    return ret;
 }
 
 
 /***************MENU EDIT ACTIONS BEGIN*************/
 
-
 void MainWindow::on_actionUndo_triggered()
 {
-
+    ui->textEdit->undo();
 }
 
 void MainWindow::on_actionCut_triggered()
 {
-
+    ui->textEdit->cut();
 }
 
 void MainWindow::on_actionCopy_triggered()
 {
-
+    ui->textEdit->copy();
 }
 
 void MainWindow::on_actionPaste_triggered()
 {
-
+    ui->textEdit->paste();
 }
 
 void MainWindow::on_actionDelete_triggered()
 {
-
+    ui->textEdit->deleteLater();
 }
 
 void MainWindow::on_actionFind_triggered()
@@ -216,7 +223,7 @@ void MainWindow::on_actionGo_To_triggered()
 
 void MainWindow::on_actionSelect_All_triggered()
 {
-
+    ui->textEdit->selectAll();
 }
 
 void MainWindow::on_actionTime_Date_triggered()
@@ -249,7 +256,7 @@ void MainWindow::on_actionFont_triggered()
 void MainWindow::on_actionStatus_Bar_triggered(bool checked)
 {
     settings->setValue("isStatusBar", checked);
-    this->statusBar()->setVisible(checked);
+    ui->statusBar->setVisible(checked);
 }
 
 void MainWindow::on_textEdit_cursorPositionChanged()
@@ -263,6 +270,8 @@ void MainWindow::on_textEdit_cursorPositionChanged()
 //    stat->setAlignment(Qt::AlignRight);
     this->stat->setText(xy);
 //    ui->statusBar->addPermanentWidget(stat);
+    ui->actionUndo->setEnabled(ui->textEdit->isUndoRedoEnabled());
+    ui->actionPaste->setEnabled(ui->textEdit->canPaste());
 }
 
 
@@ -281,4 +290,3 @@ void MainWindow::on_actionAbout_Notepad_triggered()
                 "and source code.";
     QMessageBox::about(this, "qt-notepad", s);
 }
-
