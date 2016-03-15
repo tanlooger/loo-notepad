@@ -106,7 +106,7 @@
   </widget>
   <widget class="QStatusBar" name="statusBar">
    <property name="enabled">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="mouseTracking">
     <bool>true</bool>
@@ -250,6 +250,9 @@
    </property>
   </action>
   <action name="actionSelect_All">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Select All</string>
    </property>

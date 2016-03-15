@@ -146,6 +146,10 @@ void MainWindow::on_textEdit_textChanged()
     this->isTextChanged = true;
     ui->actionUndo->setEnabled(ui->textEdit->isUndoRedoEnabled());
     ui->actionPaste->setEnabled(ui->textEdit->canPaste());
+    bool hasContent = ui->textEdit->toPlainText().isEmpty();
+    ui->actionSelect_All->setEnabled(hasContent?false:true);
+    ui->actionFind->setEnabled(hasContent?false:true);
+    ui->actionFind_Next->setEnabled(hasContent?false:true);
 }
 
 
@@ -203,7 +207,7 @@ void MainWindow::on_actionDelete_triggered()
 
 void MainWindow::on_actionFind_triggered()
 {
-
+    ui->textEdit->find("aaa");
 }
 
 void MainWindow::on_actionFind_Next_triggered()
