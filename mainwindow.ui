@@ -17,7 +17,7 @@
    <bool>false</bool>
   </property>
   <property name="windowTitle">
-   <string>loo-notepad</string>
+   <string>Untitled - qt-notepad</string>
   </property>
   <property name="documentMode">
    <bool>false</bool>
@@ -53,7 +53,7 @@
     <addaction name="actionSave"/>
     <addaction name="actionSave_As"/>
     <addaction name="separator"/>
-    <addaction name="actionPate_Setup"/>
+    <addaction name="actionPage_Setup"/>
     <addaction name="actionPrint"/>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
@@ -134,9 +134,9 @@
     <string>Save As...</string>
    </property>
   </action>
-  <action name="actionPate_Setup">
+  <action name="actionPage_Setup">
    <property name="text">
-    <string>Pate Setup...</string>
+    <string>Page Setup...</string>
    </property>
   </action>
   <action name="actionPrint">
