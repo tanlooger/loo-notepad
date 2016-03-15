@@ -6,6 +6,8 @@
 #include <QCloseEvent>
 #include <QPageSetupDialog>
 #include <QPrinter>
+#include <QSettings>
+#include <QLabel>
 
 
 namespace Ui {
@@ -19,6 +21,7 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+    QSettings* settings;
 
 private slots:
     void on_actionNew_triggered();
@@ -65,22 +68,24 @@ private slots:
 
     void on_actionTime_Date_triggered();
 
-    void on_actionWord_Wrap_triggered();
+    void on_actionWord_Wrap_triggered(bool checked);
 
     void on_actionFont_triggered();
 
-    void on_actionStatus_Bar_triggered();
+    void on_actionStatus_Bar_triggered(bool checked);
 
     void on_actionView_Help_triggered();
 
     void on_actionAbout_Notepad_triggered();
 
+    void on_textEdit_cursorPositionChanged();
+
 private:
-    Ui::MainWindow *ui;
+    Ui::MainWindow* ui;
     QFile* file;
     bool isTextChanged = false;
-    QPrinter * printer;
-
+    QPrinter* printer;
+    QLabel *stat;
 };
 
 #endif // MAINWINDOW_H

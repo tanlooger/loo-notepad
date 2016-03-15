@@ -1,15 +1,30 @@
-#include "mainwindow.h"
-#include "ui_mainwindow.h"
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QDebug>
 #include <QTextStream>
 #include <QPrinterInfo>
 #include <QRegExp>
+#include <QFontDialog>
+#include <QTextCursor>
+#include "mainwindow.h"
+#include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent):QMainWindow(parent), ui(new Ui::MainWindow)
+MainWindow::MainWindow(QWidget *parent):
+    QMainWindow(parent),
+    settings(new QSettings("Tanlooger", "qt-notepad", this)),
+    ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    ui->statusBar->setVisible(settings->value("isStatusBar").toBool());
+    ui->actionStatus_Bar->setChecked(settings->value("isStatusBar").toBool());
+    ui->actionWord_Wrap->setChecked(settings->value("isWordWrap").toBool());
+    ui->textEdit->setLineWrapMode(settings->value("isWordWrap").toBool() ? QTextEdit::WidgetWidth : QTextEdit::NoWrap);
+    QFont font = qvariant_cast<QFont>(settings->value("font"));
+    ui->textEdit->setFont(font);
+
+    this->stat = new QLabel(this);
+    stat->setAlignment(Qt::AlignRight);
+    ui->statusBar->addPermanentWidget(stat);
 }
 
 MainWindow::~MainWindow()
@@ -212,23 +227,42 @@ void MainWindow::on_actionTime_Date_triggered()
 
 
 /********MENU FORMAT ACTIONS BEGIN************/
-void MainWindow::on_actionWord_Wrap_triggered()
+void MainWindow::on_actionWord_Wrap_triggered(bool checked)
 {
-
+    settings->setValue("isWordWrap", checked);
+    ui->textEdit->setLineWrapMode(checked ? QTextEdit::WidgetWidth : QTextEdit::NoWrap);
 }
 
 void MainWindow::on_actionFont_triggered()
 {
-
+    bool ok;
+    QFont font = QFontDialog::getFont(&ok, QFont("Helvetica [Cronyx]", 10), this);
+    if(!ok)return;
+    ui->textEdit->setFont(font);
+    settings->setValue("font", font);
 }
 
 
 
 
 /**********MENU VIEW ACTIONS BEGIN*************/
-void MainWindow::on_actionStatus_Bar_triggered()
+void MainWindow::on_actionStatus_Bar_triggered(bool checked)
 {
+    settings->setValue("isStatusBar", checked);
+    this->statusBar()->setVisible(checked);
+}
 
+void MainWindow::on_textEdit_cursorPositionChanged()
+{
+    if(!ui->actionStatus_Bar->isChecked())return;
+    QTextCursor cursor = ui->textEdit->textCursor();
+    int y = cursor.blockNumber() + 1;
+    int x = cursor.columnNumber() + 1;
+    QString xy = "Ln " + QString::number(y) + ", Col " + QString::number(x) + "       ";
+//    if(stat==NULL) this->stat = new QLabel(this);
+//    stat->setAlignment(Qt::AlignRight);
+    this->stat->setText(xy);
+//    ui->statusBar->addPermanentWidget(stat);
 }
 
 
@@ -241,5 +275,10 @@ void MainWindow::on_actionView_Help_triggered()
 
 void MainWindow::on_actionAbout_Notepad_triggered()
 {
-
+    QString s ="qt-notepad is absolutely free and open source software, so "
+                "you can do everything that you want with qt-notepad and it's "
+                "source code, but you can't prevent others use this software "
+                "and source code.";
+    QMessageBox::about(this, "qt-notepad", s);
 }
+
