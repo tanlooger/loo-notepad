@@ -6,7 +6,12 @@
 #include <QRegExp>
 #include <QFontDialog>
 #include <QTextCursor>
-#include <QTableWidgetSelectionRange>
+#include <QDateTime>
+#include <QInputDialog>
+#include <QTextBlock>
+#include <QPushButton>
+#include <QCheckBox>
+#include <QGroupBox>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
@@ -207,7 +212,21 @@ void MainWindow::on_actionDelete_triggered()
 
 void MainWindow::on_actionFind_triggered()
 {
-    ui->textEdit->find("aaa");
+    QDialog* dialog = new QDialog(this);
+    dialog->setWindowTitle("Find");
+    dialog->resize(390, 130);
+    QLabel* label = new QLabel(dialog);
+    label->setText("Find");
+    QLineEdit* edit = new QLineEdit(dialog);
+    QPushButton* b1 = new QPushButton(dialog);
+    b1->setText("Find Next");
+    QPushButton* b2 = new QPushButton(dialog);
+    b2->setText("Cancel");
+    QCheckBox* ck = new QCheckBox(dialog);
+    QGroupBox* gb = new QGroupBox(dialog);
+
+    QLayout
+    dialog->exec();
 }
 
 void MainWindow::on_actionFind_Next_triggered()
@@ -220,9 +239,18 @@ void MainWindow::on_actionReplace_triggered()
 
 }
 
+
+
 void MainWindow::on_actionGo_To_triggered()
 {
-
+    bool ok;
+    int line_number = QInputDialog::getInt(this, tr("Go to Line"),
+                               tr("Enter a line number to go to: "),
+                               1, 1, ui->textEdit->document()->blockCount(), 1, &ok);
+    if (!ok) return;
+    QTextCursor text_cursor(ui->textEdit->document()->findBlockByLineNumber(line_number - 1));
+    text_cursor.select(QTextCursor::LineUnderCursor);
+    ui->textEdit->setTextCursor(text_cursor);
 }
 
 void MainWindow::on_actionSelect_All_triggered()
@@ -232,7 +260,8 @@ void MainWindow::on_actionSelect_All_triggered()
 
 void MainWindow::on_actionTime_Date_triggered()
 {
-
+    QString now = QDateTime::currentDateTime().toString("h:mm yyyy/M/d");
+    ui->textEdit->insertPlainText(now);
 }
 
 
