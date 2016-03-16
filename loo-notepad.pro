@@ -24,3 +24,9 @@ HEADERS  += mainwindow.h \
 FORMS    += mainwindow.ui \
     finder.ui \
     replace.ui
+
+DISTFILES += \
+    icon.icns \
+    INSTALL/loo-notepad.app
+
+ICON = icon.icns
