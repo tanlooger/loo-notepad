@@ -86,7 +86,7 @@ private slots:
 
 private:
     Ui::MainWindow* ui;
-    QFile* file;
+    QFile* file=NULL;
     bool isTextChanged = false;
     QPrinter* printer;
     QLabel *stat;

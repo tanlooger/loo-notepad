@@ -82,6 +82,7 @@ void MainWindow::on_actionOpen_triggered()
 void MainWindow::on_actionSave_triggered()
 {
     if(!this->file){
+        qDebug() << "on_actionSave_triggered========";
         QFileDialog dialog(this);
         dialog.setFileMode(QFileDialog::AnyFile);
         dialog.setDirectory(QDir::homePath());
@@ -91,7 +92,6 @@ void MainWindow::on_actionSave_triggered()
         if (!this->file->open(QIODevice::ReadWrite | QIODevice::Text))return;
         this->setWindowTitle(filename);
     }
-
     this->file->resize(this->file->fileName(), 0);
     QTextStream stream(this->file);
     stream << ui->textEdit->toPlainText();
