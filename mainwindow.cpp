@@ -14,6 +14,7 @@
 #include <QGroupBox>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "finder.h"
 
 MainWindow::MainWindow(QWidget *parent):
     QMainWindow(parent),
@@ -31,11 +32,11 @@ MainWindow::MainWindow(QWidget *parent):
     this->stat = new QLabel(this);
     stat->setAlignment(Qt::AlignRight);
     ui->statusBar->addPermanentWidget(stat);
-    this->setMouseTracking(true);
 
     connect(ui->textEdit, SIGNAL(copyAvailable(bool)), ui->actionCopy, SLOT(setEnabled(bool)));
     connect(ui->textEdit, SIGNAL(copyAvailable(bool)), ui->actionCut, SLOT(setEnabled(bool)));
     connect(ui->textEdit, SIGNAL(copyAvailable(bool)), ui->actionDelete, SLOT(setEnabled(bool)));
+
 }
 
 MainWindow::~MainWindow()
@@ -212,31 +213,40 @@ void MainWindow::on_actionDelete_triggered()
 
 void MainWindow::on_actionFind_triggered()
 {
-    QDialog* dialog = new QDialog(this);
-    dialog->setWindowTitle("Find");
-    dialog->resize(390, 130);
-    QLabel* label = new QLabel(dialog);
-    label->setText("Find");
-    QLineEdit* edit = new QLineEdit(dialog);
-    QPushButton* b1 = new QPushButton(dialog);
-    b1->setText("Find Next");
-    QPushButton* b2 = new QPushButton(dialog);
-    b2->setText("Cancel");
-    QCheckBox* ck = new QCheckBox(dialog);
-    QGroupBox* gb = new QGroupBox(dialog);
-
-    QLayout
-    dialog->exec();
+//    QDialog* dialog = new QDialog(this);
+//    dialog->setWindowTitle("Find");
+//    dialog->resize(390, 130);
+//    QLabel* label = new QLabel(dialog);
+//    label->setText("Find");
+//    QLineEdit* edit = new QLineEdit(dialog);
+//    QPushButton* b1 = new QPushButton(dialog);
+//    b1->setText("Find Next");
+//    QPushButton* b2 = new QPushButton(dialog);
+//    b2->setText("Cancel");
+//    QCheckBox* ck = new QCheckBox(dialog);
+//    QGroupBox* gb = new QGroupBox(dialog);
+//    dialog->exec();
+    finder = new Finder(this);
+    finder->textEdit = ui->textEdit;
+    finder->exec();
 }
 
 void MainWindow::on_actionFind_Next_triggered()
 {
-
+    if(finder){
+        finder->on_buttonFinder_clicked();
+    }else{
+        finder = new Finder(this);
+        finder->textEdit = ui->textEdit;
+        finder->exec();
+    }
 }
 
 void MainWindow::on_actionReplace_triggered()
 {
-
+    Replace replace;
+    replace.textEdit = ui->textEdit;
+    replace.exec();
 }
 
 
@@ -263,6 +273,7 @@ void MainWindow::on_actionTime_Date_triggered()
     QString now = QDateTime::currentDateTime().toString("h:mm yyyy/M/d");
     ui->textEdit->insertPlainText(now);
 }
+
 
 
 

@@ -10,6 +10,8 @@
 #include <QLabel>
 #include <QClipboard>
 #include <QMouseEvent>
+#include "finder.h"
+#include "replace.h"
 
 namespace Ui {
 class MainWindow;
@@ -81,12 +83,14 @@ private slots:
 
     void on_textEdit_cursorPositionChanged();
 
+
 private:
     Ui::MainWindow* ui;
     QFile* file;
     bool isTextChanged = false;
     QPrinter* printer;
     QLabel *stat;
+    Finder* finder;
 };
 
 #endif // MAINWINDOW_H

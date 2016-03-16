@@ -13,8 +13,14 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    finder.cpp \
+    replace.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    finder.h \
+    replace.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    finder.ui \
+    replace.ui
